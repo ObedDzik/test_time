@@ -1,10 +1,11 @@
-# TTA Baselines (Tent, EATA, SAR)
+# TTA Baselines (Tent, EATA, SAR, MEMO)
 
 This folder contains reusable test-time adaptation (TTA) baselines for image classification:
 
 - **Tent**
 - **EATA**
 - **SAR**
+- **MEMO**
 
 The implementations are designed to work with:
 
@@ -18,7 +19,7 @@ The implementations are designed to work with:
 Import setup helpers:
 
 ```python
-from test_time.TTA_baselines import setup_tent, setup_eata, setup_sar
+from test_time.TTA_baselines import setup_tent, setup_eata, setup_sar, setup_memo
 ```
 
 Wrap your model with a TTA method:
@@ -98,6 +99,22 @@ sar_model, names, arch = setup_sar(
 )
 ```
 
+### MEMO
+
+```python
+from test_time.TTA_baselines import setup_memo
+
+memo_model, names, arch = setup_memo(
+    model,
+    lr=2.5e-4,
+    steps=1,
+    batch_size=32,           # number of augmented views per sample
+    episodic=True,           # typical MEMO usage
+    augmentation_type="augmix",   # augmix | standard
+    image_size=224,
+)
+```
+
 ---
 
 ## 3) Architecture-Aware Layer Adaptation
@@ -152,4 +169,5 @@ for images, _ in test_loader:
 - Use small learning rates (`1e-4` to `1e-3`) for stability.
 - `steps > 1` can help adaptation but increases compute.
 - `episodic=True` resets model each batch/episode; `False` enables continual adaptation.
+- MEMO typically adapts one sample at a time (`batch size = 1` input to wrapper).
 - For fair baseline comparisons, keep augmentations and dataloaders identical across methods.
